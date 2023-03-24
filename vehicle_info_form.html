@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Vehicle Information Form</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <h1>Vehicle Information Form</h1>
+  <form id="vehicle-form">
+    <label for="registration">Vehicle Registration:</label>
+    <input type="text" id="registration" name="registration" required>
+    <button type="submit">Get Vehicle Information</button>
+  </form>
+  <div id="vehicle-info"></div>
+  <script src="script.js"></script>
+
+<style>
+body {
+    font-family: Arial, sans-serif;
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 20px;
+  }
+  
+  form {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin-bottom: 20px;
+  }
+  
+  label {
+    font-weight: bold;
+  }
+  
+  input {
+    padding: 5px;
+    font-size: 16px;
+  }
+  
+  button {
+    cursor: pointer;
+    padding: 10px;
+    font-size: 16px;
+    background-color: #007bff;
+    color: #ffffff;
+    border: none;
+    border-radius: 5px;
+    transition: background-color 0.2s;
+  }
+  
+  button:hover {
+    background-color: #0056b3;
+  }
+  
+  #vehicle-info {
+    font-size: 18px;
+  }
+  </style>
+  <script>document.getElementById("vehicle-form").addEventListener("submit", async (event) => {
+    event.preventDefault();
+    const registration = document.getElementById("registration").value;
+    const vehicleInfo = await getVehicleInfo(registration);
+  
+    if (vehicleInfo) {
+      displayVehicleInfo(vehicleInfo);
+    } else {
+      alert("Could not find vehicle information.");
+    }
+  });
+  
+  async function getVehicleInfo(registration) {
+    const apiKey = "aeyC7kNHjj6g7i0YndddO60f2TGadvtF5vTLBb1P"; // Replace this with your actual API key
+    const url = `https://driver-vehicle-licensing.api.gov.uk/vehicle-enquiry/v1/vehicles?registrationNumber=${encodeURIComponent(
+      registration
+    )}`;
+  
+    try {
+      const response = await fetch(url, {
+        headers: {
+          "x-api-key": apiKey,
+        },
+      });
+  
+      if (response.ok) {
+        return await response.json();
+      } else {
+        console.error("API request failed:", response.status, response.statusText);
+        return null;
+      }
+    } catch (error) {
+      console.error("Error fetching vehicle information:", error);
+      return null;
+    }
+  }
+  
+  function displayVehicleInfo(vehicleInfo) {
+    const vehicleInfoElement = document.getElementById("vehicle-info");
+    vehicleInfoElement.innerHTML = `
+      <h2>Vehicle Information</h2>
+      <p><strong>Make:</strong> ${vehicleInfo.make}</p>
+      <p><strong>Model:</strong> ${vehicleInfo.model}</p>
+      <p><strong>Year:</strong> ${vehicleInfo.yearOfManufacture}</p>
+      <p><strongColour:</strong> ${vehicleInfo.colour}</p>
+<p><strong>Vehicle Identification Number (VIN):</strong> ${vehicleInfo.vin}</p>
+<p><strong>Engine Capacity:</strong> ${vehicleInfo.engineCapacity}cc</p>
+<p><strong>CO2 Emissions:</strong> ${vehicleInfo.co2Emissions} g/km</p>
+<p><strong>Fuel Type:</strong> ${vehicleInfo.fuelType}</p>
+<p><strong>Tax Status:</strong> ${vehicleInfo.taxStatus}</p>
+<p><strong>MOT Status:</strong> ${vehicleInfo.motStatus}</p>
+`;
+}
+
+
+  </script>
+
+</body>
+</html>
